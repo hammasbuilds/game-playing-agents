@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+# downloaded games: fetched by scripts, never committed
+games/
+# run artefacts: checkpoints, logs, recordings of individual runs
+runs/
+runs_arcade/
+*.pt
+*.npz
+*.log
+_vizdoom.ini
+_vizdoom/
+MUJOCO_LOG.TXT

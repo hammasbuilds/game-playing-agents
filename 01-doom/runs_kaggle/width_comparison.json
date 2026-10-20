@@ -1,0 +1,56 @@
+{
+ "control": {
+  "params": 219476,
+  "width": 1,
+  "device": "cuda",
+  "wall_seconds": 1653.9,
+  "steps": 1199616,
+  "steps_per_second": 725.3,
+  "eval": {
+   "random": {
+    "mean": 0.03,
+    "sd": 1.0
+   },
+   "spray": {
+    "mean": 0.77,
+    "sd": 0.68
+   },
+   "ppo-greedy": {
+    "mean": 8.53,
+    "sd": 1.22
+   },
+   "ppo-sampled": {
+    "mean": 8.2,
+    "sd": 1.03
+   }
+  },
+  "best_policy_mean": 8.53
+ },
+ "wide": {
+  "params": 3446084,
+  "width": 4,
+  "device": "cuda",
+  "wall_seconds": 1694.1,
+  "steps": 1199616,
+  "steps_per_second": 708.1,
+  "eval": {
+   "random": {
+    "mean": 0.03,
+    "sd": 1.0
+   },
+   "spray": {
+    "mean": 0.77,
+    "sd": 0.68
+   },
+   "ppo-greedy": {
+    "mean": 10.43,
+    "sd": 1.38
+   },
+   "ppo-sampled": {
+    "mean": 9.93,
+    "sd": 1.08
+   }
+  },
+  "best_policy_mean": 10.43
+ }
+}

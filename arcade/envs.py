@@ -90,6 +90,18 @@ CATALOGUE: dict[str, Game] = {
         kwargs={"frameskip": 1, "repeat_action_probability": 0.0},
         retired=RETIRED_LOOK,
     ),
+    # Crafter, so the planner finally has a learned arm beside it. Not an
+    # Atari game and not Box2D: it comes through its own adapter, because it
+    # predates the Gymnasium API in three separate ways.
+    "crafter": Game(
+        key="crafter",
+        env_id="crafter/Crafter",
+        title="Crafter",
+        blurb="Survive, gather, craft. The repository already plays this with a "
+              "planner that trains nothing; this is the same 64x64 frame given "
+              "to a network instead.",
+        kwargs={},
+    ),
 }
 
 
@@ -136,6 +148,9 @@ def make(game: Game, seed: int | None = None, render: bool = False) -> gym.Env:
     produced, greyscale, 84x84). CarRacing is not Atari and needs the same shape
     arrived at differently.
     """
+    if game.env_id.startswith("crafter/"):
+        from .crafter_env import make_crafter
+        return make_crafter(seed=seed, render=render)
     env = gym.make(game.env_id, render_mode="rgb_array" if render else None,
                    **game.kwargs)
     if game.env_id.startswith("ALE/"):
@@ -161,11 +176,29 @@ def make(game: Game, seed: int | None = None, render: bool = False) -> gym.Env:
     return env
 
 
-def obs_shape() -> tuple[int, int, int]:
-    return (STACK, FRAME_H, FRAME_W)
+def obs_shape(game: Game | None = None) -> tuple[int, int, int]:
+    """What the policy is fed, for this game.
+
+    It used to be the constant (4, 84, 84) for everything, which was true while
+    every game here was Atari-shaped or resized to be. Crafter draws 64x64 and
+    is left at its own size -- upscaling it would invent pixels and make the
+    first convolution 2.7x larger for nothing -- so the shape is asked of the
+    environment rather than assumed.
+    """
+    if game is None:
+        return (STACK, FRAME_H, FRAME_W)
+    env = make(game)
+    try:
+        shape = tuple(env.observation_space.shape)
+    finally:
+        env.close()
+    return shape
 
 
 def n_actions(game: Game) -> int:
+    if game.env_id.startswith("crafter/"):
+        from .crafter_env import CrafterGym
+        return int(CrafterGym().action_space.n)
     env = gym.make(game.env_id, **game.kwargs)
     try:
         return int(env.action_space.n)

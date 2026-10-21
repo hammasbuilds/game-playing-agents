@@ -8,6 +8,12 @@ runs/
 runs_arcade/
 *.pt
 *.npz
+# ...except the Brogue glyph atlas. It is 44 KB of prototypes the screen
+# decoder cannot work without, and it cannot be rebuilt from this repository:
+# building it needs captured frames from a running game. Ignored by the blanket
+# rule above, it was missing from every clone, and the three decoder tests
+# passed only on the machine that happened to still have the file.
+!**/brogueagent/atlas.npz
 *.log
 _vizdoom.ini
 _vizdoom/

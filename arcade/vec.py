@@ -85,7 +85,12 @@ class VecArcade:
             child.close()
             self.remotes.append(parent)
             self.procs.append(proc)
-        self.frames = np.zeros((n_envs, STACK, FRAME_H, FRAME_W), dtype=np.uint8)
+        # Sized from the game, not from the Atari constants: a game that draws
+        # 64x64 and is not resized would otherwise be pushed into an 84x84
+        # buffer and fail on the first frame.
+        from .envs import obs_shape
+        self.shape = obs_shape(game)
+        self.frames = np.zeros((n_envs, *self.shape), dtype=np.uint8)
 
     def _push(self, i: int, frame: np.ndarray) -> None:
         self.frames[i, :-1] = self.frames[i, 1:]

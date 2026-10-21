@@ -128,7 +128,7 @@ def save_checkpoint(model, game: Game, cfg: PPOConfig, out_dir: Path, step: int,
     # moment a second architecture exists.
     torch.save({"model": model.state_dict(), "game": game.key, "width": cfg.width,
                 "arch": cfg.arch, "n_actions": n_actions(game),
-                "obs_shape": obs_shape(), "step": step, "tag": tag,
+                "obs_shape": obs_shape(game), "step": step, "tag": tag,
                 "stats": stats}, path)
     return path
 
@@ -141,7 +141,7 @@ def train(game: Game, cfg: PPOConfig, out_dir: Path, seed: int = 0,
     out_dir.mkdir(parents=True, exist_ok=True)
     device = resolve_device(cfg.device)
 
-    shape = obs_shape()
+    shape = obs_shape(game)
     actions = n_actions(game)
     model = ActorCritic(shape, actions, width=cfg.width, arch=cfg.arch).to(device)
     opt = torch.optim.Adam(model.parameters(), lr=cfg.lr, eps=1e-5)
